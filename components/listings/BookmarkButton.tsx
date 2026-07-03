@@ -57,18 +57,17 @@ export default function BookmarkButton({ listingId, size = 'md' }: BookmarkButto
       >
         <Heart
           className={`${sizeClasses[size]} ${isBookmarked
-              ? 'fill-red-500 text-red-500'
-              : 'text-gray-400 hover:text-red-500'
+            ? 'fill-red-500 text-red-500'
+            : 'text-gray-400 hover:text-red-500'
             } transition-colors`}
         />
       </button>
 
-      <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)}>
+      <Modal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} title="Save Your Favorites">
         <div className="text-center">
           <div className="w-12 h-12 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">
             <Heart className="w-6 h-6 text-primary" />
           </div>
-          <h3 className="text-lg font-bold text-gray-900 mb-2">Save Your Favorites</h3>
           <p className="text-sm text-gray-500 mb-6">Sign in to bookmark properties and access them later.</p>
 
           <div className="space-y-3">
