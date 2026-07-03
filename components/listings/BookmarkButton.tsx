@@ -1,10 +1,11 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
 import { useAuth } from '@/lib/AuthContext';
 import { Modal } from '@/components/ui/index';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 
 interface BookmarkButtonProps {
   listingId: string;
@@ -17,12 +18,36 @@ export default function BookmarkButton({ listingId, size = 'md' }: BookmarkButto
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const sizeClasses = {
     sm: 'w-5 h-5',
     md: 'w-6 h-6',
     lg: 'w-7 h-7',
   };
+
+  // Load bookmark status when user changes or component mounts
+  useEffect(() => {
+    setMounted(true);
+    const checkBookmarkStatus = async () => {
+      if (!user) {
+        setIsBookmarked(false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/listings/${listingId}/bookmark`);
+        if (res.ok) {
+          const data = await res.json();
+          setIsBookmarked(data.isBookmarked);
+        }
+      } catch (err) {
+        console.error('Failed to check bookmark status:', err);
+      }
+    };
+
+    checkBookmarkStatus();
+  }, [user, listingId]);
 
   const handleBookmark = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -38,15 +63,23 @@ export default function BookmarkButton({ listingId, size = 'md' }: BookmarkButto
       const res = await fetch(`/api/listings/${listingId}/bookmark`, {
         method: isBookmarked ? 'DELETE' : 'POST',
       });
-      if (res.ok) {
-        setIsBookmarked(!isBookmarked);
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Failed to update bookmark');
       }
-    } catch {
-      // Silent fail
+
+      setIsBookmarked(!isBookmarked);
+      toast.success(isBookmarked ? 'Removed from bookmarks' : 'Added to bookmarks');
+    } catch (err) {
+      console.error('Bookmark error:', err);
+      toast.error(err instanceof Error ? err.message : 'Failed to update bookmark');
     } finally {
       setLoading(false);
     }
   };
+
+  if (!mounted) return null;
 
   return (
     <>

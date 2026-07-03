@@ -16,6 +16,7 @@ export interface IUserDoc extends Document {
   isActive: boolean;
   isSuspended: boolean;
   suspensionReason: string;
+  bookmarkedListings: string[];
   otp?: string;
   otpExpiry?: Date;
   resetToken?: string;
@@ -41,6 +42,7 @@ const UserSchema = new Schema<IUserDoc>(
     isActive:         { type: Boolean, default: true },
     isSuspended:      { type: Boolean, default: false },
     suspensionReason: { type: String, default: '' },
+    bookmarkedListings: { type: [String], default: [] },
     otp:              { type: String, select: false },
     otpExpiry:        { type: Date,   select: false },
     resetToken:       { type: String, select: false },

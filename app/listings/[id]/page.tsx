@@ -8,6 +8,7 @@ import Footer from '@/components/layout/Footer';
 import PhotoGallery from '@/components/listings/PhotoGallery';
 import { ReviewCard, ReviewForm } from '@/components/reviews/ReviewCard';
 import NearbyListings from '@/components/listings/NearbyListings';
+import BookmarkButton from '@/components/listings/BookmarkButton';
 import { Badge, Avatar, Spinner, Modal } from '@/components/ui/index';
 import AnonymousAvatar from '@/components/ui/AnonymousAvatar';
 import Button from '@/components/ui/Button';
@@ -150,7 +151,10 @@ export default function ListingDetailPage() {
                   <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-2"><MapPin className="w-4 h-4 text-primary" />{listing.streetAddress}, {listing.area}, {listing.lga}, {listing.state}</div>
                   {listing.nearbyUniversity && <div className="flex items-center gap-1.5 text-sm text-primary mt-1 font-medium"><GraduationCap className="w-4 h-4" />{listing.nearbyUniversity}{listing.distanceFromCampus && ` · ${listing.distanceFromCampus}`}</div>}
                 </div>
-                {!isOwner && <button onClick={() => setFlagModal(true)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Flag className="w-3.5 h-3.5" /> Report</button>}
+                <div className="flex items-center gap-2">
+                  <BookmarkButton listingId={listing._id} size="lg" />
+                  {!isOwner && <button onClick={() => setFlagModal(true)} className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Flag className="w-3.5 h-3.5" /> Report</button>}
+                </div>
               </div>
 
               <div className="flex items-center gap-4 mt-4 text-xs text-gray-400 flex-wrap">
