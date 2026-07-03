@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyJWT, getTokenFromRequest } from '@/lib/jwt';
 
-export async function middleware(request: NextRequest): Promise<NextResponse> {
+export async function proxy(request: NextRequest): Promise<NextResponse> {
   const { pathname } = request.nextUrl;
 
   const isDashboard = pathname.startsWith('/dashboard');
