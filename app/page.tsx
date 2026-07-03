@@ -9,8 +9,9 @@ import { Spinner } from '@/components/ui/index';
 import { Search, ShieldCheck, MessageCircle, CreditCard, ArrowRight, GraduationCap, Users, EyeOff } from 'lucide-react';
 import { UNIVERSITIES } from '@/lib/utils';
 import type { IListing, IRoommateRequest } from '@/types';
+import AirBNBLandingPage from '@/components/layout/AirBNBLandingPage';
 
-export default function HomePage() {
+function LandingPage() {
   const [search, setSearch]         = useState('');
   const [university, setUniversity] = useState('');
   const [listings, setListings]     = useState<IListing[]>([]);
@@ -210,4 +211,10 @@ export default function HomePage() {
       <Footer />
     </div>
   );
+}
+
+
+export default function HomePage() {
+  // return <LandingPage />;
+  return <AirBNBLandingPage />;
 }

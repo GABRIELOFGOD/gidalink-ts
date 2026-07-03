@@ -7,6 +7,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import PhotoGallery from '@/components/listings/PhotoGallery';
 import { ReviewCard, ReviewForm } from '@/components/reviews/ReviewCard';
+import NearbyListings from '@/components/listings/NearbyListings';
 import { Badge, Avatar, Spinner, Modal } from '@/components/ui/index';
 import AnonymousAvatar from '@/components/ui/AnonymousAvatar';
 import Button from '@/components/ui/Button';
@@ -32,16 +33,18 @@ export default function ListingDetailPage() {
 
   const [listing, setListing] = useState<IListing | null>(null);
   const [reviews, setReviews] = useState<IReview[]>([]);
+  const [reviewsPerPage] = useState(5);
+  const [displayedReviewsCount, setDisplayedReviewsCount] = useState(5);
   const [loading, setLoading] = useState(true);
   const [showPhone, setShowPhone] = useState(false);
-  const [flagModal, setFlagModal]   = useState(false);
+  const [flagModal, setFlagModal] = useState(false);
   const [flagReason, setFlagReason] = useState('');
-  const [messaging, setMessaging]   = useState(false);
+  const [messaging, setMessaging] = useState(false);
   const [boostModal, setBoostModal] = useState(false);
-  const [payModal, setPayModal]     = useState(false);
-  const [payAmount, setPayAmount]   = useState('');
-  const [paying, setPaying]         = useState(false);
-  const [boosting, setBoosting]     = useState(false);
+  const [payModal, setPayModal] = useState(false);
+  const [payAmount, setPayAmount] = useState('');
+  const [paying, setPaying] = useState(false);
+  const [boosting, setBoosting] = useState(false);
   const [togglingAnon, setTogglingAnon] = useState(false);
 
   const fetchData = useCallback(async () => {
@@ -51,7 +54,7 @@ export default function ListingDetailPage() {
       const rData = await rRes.json();
       if (lRes.ok) setListing(lData.listing);
       if (rRes.ok) setReviews(rData.reviews ?? []);
-    } catch {} finally { setLoading(false); }
+    } catch { } finally { setLoading(false); }
   }, [id]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
@@ -191,13 +194,24 @@ export default function ListingDetailPage() {
               </div>
             )}
 
+            <div className="bg-white rounded-2xl border border-gray-100 p-6 shadow-card">
+              <NearbyListings listingId={listing._id} />
+            </div>
+
             <div>
               <div className="flex items-center justify-between mb-4"><h2 className="text-base font-bold text-gray-900">Reviews ({reviews.length})</h2></div>
               {!isOwner && !userReviewed && <div className="mb-4"><ReviewForm listingId={listing._id} onSuccess={r => { setReviews(prev => [r, ...prev]); fetchData(); }} /></div>}
               {reviews.length === 0 ? (
                 <div className="text-center py-10 bg-white rounded-2xl border border-gray-100"><p className="text-gray-400 text-sm">No reviews yet. Be the first to share your experience.</p></div>
               ) : (
-                <div className="space-y-4">{reviews.map(r => <ReviewCard key={r._id} review={r} />)}</div>
+                <>
+                  <div className="space-y-4">{reviews.slice(0, displayedReviewsCount).map(r => <ReviewCard key={r._id} review={r} />)}</div>
+                  {displayedReviewsCount < reviews.length && (
+                    <button onClick={() => setDisplayedReviewsCount(prev => prev + reviewsPerPage)} className="w-full mt-4 py-3 text-sm font-semibold text-primary hover:bg-primary-light rounded-lg transition-colors border border-primary-light">
+                      Load More Reviews ({displayedReviewsCount} of {reviews.length})
+                    </button>
+                  )}
+                </>
               )}
             </div>
           </div>
